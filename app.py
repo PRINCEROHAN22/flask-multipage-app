@@ -15,9 +15,29 @@ def user_profile(username):
     return render_template("user.html", username=username)
 
 @app.route('/greet', methods=['GET', 'POST'])
+
 def greet():
     name = request.values.get('name', 'Friend')
     return render_template("user.html", username=name)
+
+def safe_divide(a, b):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        return "Cannot divide by zero"
+    except TypeError:
+        return "Inputs must be numbers"
+    
+USERS = {
+    "Rohan": {"role": "admin", "city": "Chennai"},
+    "Eva": {"role": "guide", "city": "Everywhere"},
+}
+
+@app.route('/who/<name>')
+def who(name):
+    info = USERS.get(name, {"role": "guest", "city": "Unknown"})
+    return render_template("user.html", username=f"{name} ({info['role']}, {info['city']})")
+
 
 if __name__ == '__main__':
     app.run(debug=True)
