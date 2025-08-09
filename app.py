@@ -38,6 +38,14 @@ def who(name):
     info = USERS.get(name, {"role": "guest", "city": "Unknown"})
     return render_template("user.html", username=f"{name} ({info['role']}, {info['city']})")
 
+@app.route('/divide')
+def divide():
+    a = request.args.get('a', type=float)
+    b = request.args.get('b', type=float)
+    result = safe_divide(a, b)
+    return render_template("user.html", username=f"Result: {result}")
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
