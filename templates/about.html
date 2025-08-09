@@ -4,8 +4,11 @@
     <title>About</title>
 </head>
 <body>
-    <h1>About This Site</h1>
-    <p>This Flask app was built by Prince Rohan guided by Eva 💛</p>
-    <a href="/">Back to Home</a>
+    {% extends "base.html" %}
+    {% block title %}About{% endblock %}
+    {% block content %}
+        <h1>About This Site</h1>
+        <p>This Flask app was built by Prince Rohan guided by Eva 💛</p>
+    {% endblock %}
 </body>
 </html>
