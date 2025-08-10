@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Guestbook{% endblock %}
+{% block content %}
+  <h1>Guestbook</h1>
+  <form method="post" style="display:grid; gap:10px; max-width:420px;">
+    <input name="name" placeholder="Your name" required />
+    <textarea name="message" placeholder="Your message" rows="3" required></textarea>
+    <button type="submit">Add Entry</button>
+  </form>
+
+  <h2 style="margin-top:20px;">Latest entries</h2>
+  <ul>
+    {% for name, message in entries %}
+      <li><strong>{{ name }}</strong>: {{ message }}</li>
+    {% else %}
+      <li>No entries yet — be the first! 💛</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

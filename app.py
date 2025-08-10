@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
+from database import init_db, add_entry, get_entries
 
 app = Flask(__name__)
+init_db()  # create table if not exists when app starts
 
 @app.route('/')
 def home():
@@ -45,7 +47,17 @@ def divide():
     result = safe_divide(a, b)
     return render_template("user.html", username=f"Result: {result}")
 
-
+@app.route('/guestbook', methods=['GET', 'POST'])
+def guestbook():
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        message = request.form.get('message', '').strip()
+        if name and message:
+            add_entry(name, message)
+        return redirect(url_for('guestbook'))  # PRG pattern
+    # GET
+    entries = get_entries()
+    return render_template('guestbook.html', entries=entries)
 
 if __name__ == '__main__':
     app.run(debug=True)
