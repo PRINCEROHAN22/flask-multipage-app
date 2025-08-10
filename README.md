@@ -44,3 +44,13 @@ HTML + Jinja2 Templates
 ## 🔗 Live Demo
 
 👉 [View Website](https://flask-multipage-app-vi7o.onrender.com/)
+
+## ✨ New Features
+- Base layout + clean styling
+- Greeting form → `/greet?name=YourName`
+- User info route → `/who/<name>` (role + city demo)
+
+## 🗒️ Guestbook (SQLite)
+- Route: `/guestbook`
+- Features: Add name + message, list recent entries
+- Tech: Python `sqlite3`, simple DAO in `database.py`
