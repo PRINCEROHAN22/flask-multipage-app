@@ -47,17 +47,22 @@ def divide():
     result = safe_divide(a, b)
     return render_template("user.html", username=f"Result: {result}")
 
+# ... existing imports above ...
+# from database import init_db, add_entry, get_entries
+
 @app.route('/guestbook', methods=['GET', 'POST'])
 def guestbook():
+    error = None
     if request.method == 'POST':
-        name = request.form.get('name', '').strip()
-        message = request.form.get('message', '').strip()
-        if name and message:
+        name = (request.form.get('name') or '').strip()
+        message = (request.form.get('message') or '').strip()
+        if not name or not message:
+            error = "Name and message are required."
+        else:
             add_entry(name, message)
-        return redirect(url_for('guestbook'))  # PRG pattern
-    # GET
+            return redirect(url_for('guestbook'))  # PRG pattern
     entries = get_entries()
-    return render_template('guestbook.html', entries=entries)
+    return render_template('guestbook.html', entries=entries, error=error)
 
 if __name__ == '__main__':
     app.run(debug=True)

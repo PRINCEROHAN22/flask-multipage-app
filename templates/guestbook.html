@@ -2,6 +2,13 @@
 {% block title %}Guestbook{% endblock %}
 {% block content %}
   <h1>Guestbook</h1>
+
+  {% if error %}
+    <div style="background:#ffe8e8; color:#a00; padding:10px; border-radius:8px; margin-bottom:12px;">
+      {{ error }}
+    </div>
+  {% endif %}
+
   <form method="post" style="display:grid; gap:10px; max-width:420px;">
     <input name="name" placeholder="Your name" required />
     <textarea name="message" placeholder="Your message" rows="3" required></textarea>
@@ -9,11 +16,16 @@
   </form>
 
   <h2 style="margin-top:20px;">Latest entries</h2>
-  <ul>
-    {% for name, message in entries %}
-      <li><strong>{{ name }}</strong>: {{ message }}</li>
+  <div style="display:grid; gap:12px;">
+    {% for name, message, created_at in entries %}
+      <div style="background:#fff; padding:14px 16px; border-radius:10px; box-shadow:0 4px 16px rgba(0,0,0,.06);">
+        <div style="font-weight:bold;">{{ name }}</div>
+        <div style="margin:6px 0 8px;">{{ message }}</div>
+        <div style="font-size:12px; color:#666;">Posted at: {{ created_at }}</div>
+      </div>
     {% else %}
-      <li>No entries yet — be the first! 💛</li>
+      <div>No entries yet — be the first! 💛</div>
     {% endfor %}
-  </ul>
+  </div>
+  <p><a href="/guestbook">Open Guestbook</a></p>
 {% endblock %}
