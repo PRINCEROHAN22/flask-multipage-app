@@ -54,3 +54,9 @@ HTML + Jinja2 Templates
 - Route: `/guestbook`
 - Features: Add name + message, list recent entries
 - Tech: Python `sqlite3`, simple DAO in `database.py`
+
+## ✨ Guestbook Pro Features
+- Create, **Edit**, **Delete** entries
+- **Search** by name/message (`?q=term`)
+- **Pagination** (`?page=1&limit=5`)
+- **Export CSV**: `/guestbook/export`
