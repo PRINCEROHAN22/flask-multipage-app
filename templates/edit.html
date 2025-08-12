@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Edit Entry{% endblock %}
+{% block content %}
+  <h1>Edit Entry</h1>
+  <form method="post" style="display:grid; gap:10px; max-width:420px;">
+    <input name="name" value="{{ item[1] }}" required />
+    <textarea name="message" rows="3" required>{{ item[2] }}</textarea>
+    <button type="submit">Save Changes</button>
+    <a href="/guestbook">Cancel</a>
+  </form>
+  <p style="margin-top:10px; color:#666;">Originally posted at: {{ item[3] }}</p>
+{% endblock %}

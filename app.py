@@ -1,35 +1,34 @@
-from flask import Flask, render_template, request, redirect, url_for
-from database import init_db, add_entry, get_entries
+from flask import Flask, render_template, request, redirect, url_for, Response
+from database import (
+    init_db, add_entry, get_entries, get_entries_paged,
+    count_entries, get_entry, update_entry, delete_entry
+)
 
 app = Flask(__name__)
 init_db()  # create table if not exists when app starts
+
 
 @app.route('/')
 def home():
     return render_template("home.html")
 
+
 @app.route('/about')
 def about():
     return render_template("about.html")
+
 
 @app.route('/user/<username>')
 def user_profile(username):
     return render_template("user.html", username=username)
 
-@app.route('/greet', methods=['GET', 'POST'])
 
+@app.route('/greet', methods=['GET', 'POST'])
 def greet():
     name = request.values.get('name', 'Friend')
     return render_template("user.html", username=name)
 
-def safe_divide(a, b):
-    try:
-        return a / b
-    except ZeroDivisionError:
-        return "Cannot divide by zero"
-    except TypeError:
-        return "Inputs must be numbers"
-    
+
 USERS = {
     "Rohan": {"role": "admin", "city": "Chennai"},
     "Eva": {"role": "guide", "city": "Everywhere"},
@@ -40,15 +39,6 @@ def who(name):
     info = USERS.get(name, {"role": "guest", "city": "Unknown"})
     return render_template("user.html", username=f"{name} ({info['role']}, {info['city']})")
 
-@app.route('/divide')
-def divide():
-    a = request.args.get('a', type=float)
-    b = request.args.get('b', type=float)
-    result = safe_divide(a, b)
-    return render_template("user.html", username=f"Result: {result}")
-
-# ... existing imports above ...
-# from database import init_db, add_entry, get_entries
 
 @app.route('/guestbook', methods=['GET', 'POST'])
 def guestbook():
@@ -60,9 +50,65 @@ def guestbook():
             error = "Name and message are required."
         else:
             add_entry(name, message)
-            return redirect(url_for('guestbook'))  # PRG pattern
-    entries = get_entries()
-    return render_template('guestbook.html', entries=entries, error=error)
+            return redirect(url_for('guestbook'))
+
+    # query params for search & pagination
+    q = (request.args.get('q') or '').strip()
+    page = max(1, int(request.args.get('page', 1)))
+    limit = max(1, int(request.args.get('limit', 5)))
+
+    total = count_entries(q=q if q else None)
+    total_pages = max(1, (total + limit - 1) // limit)
+    page = min(page, total_pages)
+
+    entries = get_entries_paged(page=page, limit=limit, q=q if q else None)
+
+    return render_template(
+        'guestbook.html',
+        entries=entries, error=error,
+        q=q, page=page, total_pages=total_pages, limit=limit
+    )
+
+
+@app.route('/guestbook/<int:item_id>/edit', methods=['GET', 'POST'])
+def edit_entry_route(item_id):
+    row = get_entry(item_id)
+    if not row:
+        return redirect(url_for('guestbook'))
+    if request.method == 'POST':
+        name = (request.form.get('name') or '').strip()
+        message = (request.form.get('message') or '').strip()
+        if name and message:
+            update_entry(item_id, name, message)
+            return redirect(url_for('guestbook'))
+    # row: (id, name, message, created_at)
+    return render_template('edit.html', item=row)
+
+
+@app.route('/guestbook/<int:item_id>/delete', methods=['POST'])
+def delete_entry_route(item_id):
+    delete_entry(item_id)
+    return redirect(url_for('guestbook'))
+
+
+@app.route('/guestbook/export')
+def export_csv():
+    # export all (ignoring pagination/search for simplicity)
+    rows = get_entries()  # (name, message, created_at)
+    import csv, io
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(['name', 'message', 'created_at'])
+    for r in rows:
+        writer.writerow([r[0], r[1], r[2]])
+    csv_data = buf.getvalue()
+    buf.close()
+    return Response(
+        csv_data,
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=guestbook.csv'}
+    )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
