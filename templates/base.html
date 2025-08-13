@@ -15,8 +15,9 @@
     .card{background:var(--card); padding:24px; border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,.06)}
     footer{color:#666; text-align:center; padding:24px 0}
   </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="page-enter">
   <header>
     <nav>
       <a href="/">Home</a>
@@ -31,5 +32,51 @@
   </main>
 
   <footer>Built with 💛 by Rohan & Eva</footer>
+<script>
+(function () {
+  // Respect reduced motion
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const body = document.body;
+
+  // Fade in on first paint
+  function enter() {
+    // body already has "page-enter" from HTML
+    requestAnimationFrame(() => {
+      body.classList.add('page-enter-active');
+      body.addEventListener('transitionend', () => {
+        body.classList.remove('page-enter', 'page-enter-active');
+      }, { once: true });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', enter, { once: true });
+  } else {
+    enter();
+  }
+
+  // Intercept internal link clicks for a fade-out
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a) return;
+
+    const href = a.getAttribute('href');
+    // ignore anchors/downloads/new tabs
+    if (!href || href.startsWith('#') || a.hasAttribute('download') || a.target === '_blank') return;
+
+    // same-origin only
+    const next = new URL(href, window.location.href);
+    if (next.origin !== window.location.origin) return;
+
+    e.preventDefault();
+    body.classList.add('page-exit');
+    // match your CSS .20s exit duration
+    setTimeout(() => { window.location.href = next.href; }, 200);
+  });
+})();
+</script>
+
+
 </body>
 </html>

@@ -5,15 +5,18 @@
 </head>
 <body>
     {% extends "base.html" %}
+
     {% block title %}Home{% endblock %}
+
     {% block content %}
-        <h1>Welcome to our Flask App 💻</h1>
+    <div class="fade-in">
+        <h1 class="reveal-in">Welcome to our Flask App 💻</h1>
         <p>This is the home page with new styling.</p>
         <a href="/user/Rohan">Visit Your Profile</a>
         <form action="/greet" method="get" style="margin-top:16px;">
-        <label>Enter your name:</label>
-        <input name="name" placeholder="Your Name" />
-        <button type="submit">Greet me</button>
+            <label>Enter your name:</label>
+            <input name="name" placeholder="Your Name" />
+            <button type="submit">Greet me</button>
         </form>
         <hr>
         <p>Quick demos:</p>
@@ -22,6 +25,7 @@
         </ul>
         <hr>
         <p><a href="/guestbook">Open Guestbook</a></p>
+    </div>
     {% endblock %}
 </body>
 </html>
