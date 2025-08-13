@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>User Profile</title>
-</head>
-<body>
-    {% extends "base.html" %}
-    {% block title %}User Profile{% endblock %}
-    {% block content %}
-        <h1>Hello, {{ username }}!</h1>
-        <p>This is your personal profile page with styling.</p>
-    {% endblock %}
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+  <h1>Hello, {{ username }}!</h1>
+  <p>This is your personal profile page with styling.</p>
+</div>
+{% endblock %}

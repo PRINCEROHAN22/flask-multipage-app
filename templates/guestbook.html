@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+
 {% block title %}Guestbook{% endblock %}
+
 {% block content %}
+<div class="fade-in">
   <h1>Guestbook</h1>
 
   <form method="get" style="margin-bottom:12px;">
@@ -48,4 +51,5 @@
     {% endif %}
     <a href="/guestbook/export" style="margin-left:auto;">Export CSV</a>
   </div>
+</div>
 {% endblock %}
