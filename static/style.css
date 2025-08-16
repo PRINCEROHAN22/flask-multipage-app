@@ -89,3 +89,55 @@ body.page-exit {
 @media (prefers-reduced-motion: reduce) {
   .btn-anim.press { animation: none; }
 }
+
+/* Dark mode polish */
+body.dark-mode {
+  background-color: #121212;
+  color: #e7e7e7;
+}
+
+body.dark-mode header {
+  background-color: #1e1e1e;
+}
+
+body.dark-mode .card,
+body.dark-mode .content {
+  background: #1a1a1a !important;
+  color: #e7e7e7;
+  box-shadow: 0 6px 24px rgba(0,0,0,.35);
+}
+
+body.dark-mode a { color: #8ab4f8; }
+body.dark-mode a:hover { color: #b3d1ff; }
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode button {
+  background: #222;
+  color: #e7e7e7;
+  border: 1px solid #333;
+}
+
+/* Floating dark mode toggle button */
+.dm-toggle{
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #ffffff;
+  color: #111;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+  z-index: 9999;
+}
+body.dark-mode .dm-toggle{
+  background:#222; border-color:#333; color:#e7e7e7;
+}
+
+/* Page transition classes (if not already present) */
+body.page-enter { opacity: 0; }
+body.page-enter-active { opacity: 1; transition: opacity .25s ease; }
+body.page-exit { opacity: 0; transition: opacity .20s ease; }
+

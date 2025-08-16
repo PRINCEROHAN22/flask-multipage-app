@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, Response
+from utils_text import summarize  # add at top with other imports
 from database import (
     init_db, add_entry, get_entries, get_entries_paged,
     count_entries, get_entry, update_entry, delete_entry
@@ -108,6 +109,20 @@ def export_csv():
         mimetype='text/csv',
         headers={'Content-Disposition': 'attachment; filename=guestbook.csv'}
     )
+
+@app.route('/summarize', methods=['GET', 'POST'])
+def summarize_view():
+    # accept from form (POST) or query string (GET)
+    text = (request.values.get('text') or "").strip()
+    k_raw = request.values.get('k', 2)
+    try:
+        k = int(k_raw)
+    except (TypeError, ValueError):
+        k = 2
+
+    result = summarize(text, max_sentences=k) if text else None
+    return render_template('summarize.html', text=text, result=result)
+
 
 
 if __name__ == '__main__':

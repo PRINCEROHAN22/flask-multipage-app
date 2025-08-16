@@ -3,6 +3,8 @@
 <head>
   <title>{% block title %}Flask App{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Base theme variables -->
   <style>
     :root { --bg:#f5f5f5; --ink:#222; --card:#fff; --brand:#333; }
     *{box-sizing:border-box}
@@ -14,14 +16,29 @@
     .container{max-width:900px; margin:24px auto; padding:0 16px}
     .card{background:var(--card); padding:24px; border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,.06)}
     footer{color:#666; text-align:center; padding:24px 0}
+
+    /* Dark mode overrides via CSS variables */
+    body.dark-mode{
+      --bg:#121212;
+      --ink:#e7e7e7;
+      --card:#1a1a1a;
+      --brand:#1e1e1e;
+    }
   </style>
+
+  <!-- Your external stylesheet (animations, etc.) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body class="page-enter">
+  <!-- ONE toggle button (floating) -->
+  <button id="dm-toggle" class="dm-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">🌓 Dark Mode</button>
+
   <header>
     <nav>
       <a href="/">Home</a>
       <a href="/about">About</a>
+      <a href="/summarize">Summarize</a>
     </nav>
   </header>
 
@@ -32,73 +49,57 @@
   </main>
 
   <footer>Built with 💛 by Rohan & Eva</footer>
-<script>
-(function () {
-  // Respect reduced motion
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  const body = document.body;
+  <!-- Page transitions script (kept) -->
+  <script>
+  (function () {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const body = document.body;
 
-  // Fade in on first paint
-  function enter() {
-    // body already has "page-enter" from HTML
-    requestAnimationFrame(() => {
-      body.classList.add('page-enter-active');
-      body.addEventListener('transitionend', () => {
-        body.classList.remove('page-enter', 'page-enter-active');
-      }, { once: true });
+    function enter() {
+      requestAnimationFrame(() => {
+        body.classList.add('page-enter-active');
+        body.addEventListener('transitionend', () => {
+          body.classList.remove('page-enter', 'page-enter-active');
+        }, { once: true });
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', enter, { once: true });
+    } else {
+      enter();
+    }
+
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (!href || href.startsWith('#') || a.hasAttribute('download') || a.target === '_blank') return;
+      const next = new URL(href, window.location.href);
+      if (next.origin !== window.location.origin) return;
+
+      e.preventDefault();
+      body.classList.add('page-exit');
+      setTimeout(() => { window.location.href = next.href; }, 200);
     });
-  }
+  })();
+  </script>
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', enter, { once: true });
-  } else {
-    enter();
-  }
+  <!-- Dark mode (single source of truth, with persistence) -->
+  <script>
+  (function () {
+    const KEY = 'prefers-dark';
+    try {
+      if (localStorage.getItem(KEY) === 'true') {
+        document.body.classList.add('dark-mode');
+      }
+    } catch (_) {}
 
-  // Intercept internal link clicks for a fade-out
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest('a');
-    if (!a) return;
-
-    const href = a.getAttribute('href');
-    // ignore anchors/downloads/new tabs
-    if (!href || href.startsWith('#') || a.hasAttribute('download') || a.target === '_blank') return;
-
-    // same-origin only
-    const next = new URL(href, window.location.href);
-    if (next.origin !== window.location.origin) return;
-
-    e.preventDefault();
-    body.classList.add('page-exit');
-    // match your CSS .20s exit duration
-    setTimeout(() => { window.location.href = next.href; }, 200);
-  });
-})();
-</script>
-
-<script>
-(function () {
-  // reduced motion
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  // Delegate submit on the greet form only
-  document.addEventListener('submit', function (e) {
-    const form = e.target;
-    if (form.getAttribute('action') !== '/greet') return;
-
-    const btn = form.querySelector('button[type="submit"]');
-    if (!btn) return;
-
-    // prevent double submits & play animation
-    btn.disabled = true;
-    btn.classList.remove('press'); // reset if clicked twice fast
-    // force reflow so animation restarts reliably
-    void btn.offsetWidth;
-    btn.classList.add('press');
-  }, true);
-})();
-</script>
-
+    window.toggleDarkMode = function () {
+      const on = document.body.classList.toggle('dark-mode');
+      try { localStorage.setItem(KEY, on ? 'true' : 'false'); } catch (_) {}
+    };
+  })();
+  </script>
 </body>
 </html>
