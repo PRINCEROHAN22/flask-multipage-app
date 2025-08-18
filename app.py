@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, Response
 from utils_text import summarize  # add at top with other imports
+from utils_sentiment import sentiment_label
 from database import (
     init_db, add_entry, get_entries, get_entries_paged,
     count_entries, get_entry, update_entry, delete_entry
@@ -122,6 +123,14 @@ def summarize_view():
 
     result = summarize(text, max_sentences=k) if text else None
     return render_template('summarize.html', text=text, result=result)
+
+@app.route('/sentiment', methods=['GET', 'POST'])
+def sentiment_view():
+    text = (request.values.get('text') or "").strip()
+    label = score = None
+    if text:
+        label, score = sentiment_label(text)
+    return render_template('sentiment.html', text=text, label=label, score=score)
 
 
 

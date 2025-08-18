@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Sentiment{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>Sentiment Analyzer 😊😐☹️</h1>
+
+  <form method="post" style="margin-top:12px;">
+    <textarea name="text" rows="6" style="width:100%;" placeholder="Type or paste text here...">{{ text }}</textarea>
+    <br><br>
+    <button type="submit" class="btn-anim bounce-hover">Analyze</button>
+  </form>
+
+  {% if label %}
+    <hr>
+    <p><strong>Result:</strong> {{ label|capitalize }} <small>(score {{ score }})</small></p>
+  {% elif text %}
+    <hr>
+    <p>No result computed.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -140,4 +140,3 @@ body.dark-mode .dm-toggle{
 body.page-enter { opacity: 0; }
 body.page-enter-active { opacity: 1; transition: opacity .25s ease; }
 body.page-exit { opacity: 0; transition: opacity .20s ease; }
-
