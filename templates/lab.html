@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Lab{% endblock %}
+
+{% block content %}
+<!-- Local styles only for the lab page so we SEE it clearly -->
+<style>
+  /* Make background slightly gray so cards stand out */
+  .lab-wrap { margin-top: 12px; }
+  .lab-spacer { height: 55vh; }
+
+  .lab-card {
+    background: #ffffff;
+    color: #222;                /* strong contrast */
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    padding: 24px;
+    margin: 0 0 18px 0;
+  }
+
+  /* Slide-in animation styles (inline for this page only) */
+  [data-reveal]{
+    opacity: 0;
+    transform: translateY(80px);
+    transition: opacity .9s ease-out, transform .9s ease-out;
+    will-change: opacity, transform;
+  }
+  [data-reveal].is-in{
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<div class="lab-wrap">
+  <section class="lab-card" data-reveal>
+    <h2>Lab Card 1</h2>
+    <p>This should animate on first paint (fade + slide up).</p>
+  </section>
+
+  <div class="lab-spacer"></div>
+
+  <section class="lab-card" data-reveal>
+    <h2>Lab Card 2</h2>
+    <p>This should animate when you scroll to it.</p>
+  </section>
+
+  <div class="lab-spacer"></div>
+
+  <section class="lab-card" data-reveal>
+    <h2>Lab Card 3</h2>
+    <p>This should animate when you scroll further down.</p>
+  </section>
+</div>
+
+<!-- Inline script so we are 100% sure it runs -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const items = Array.from(document.querySelectorAll('[data-reveal]'));
+  console.log('[lab] items found:', items.length);  // DEBUG banner
+
+  const reveal = (el) => {
+    if (!el.classList.contains('is-in')) {
+      requestAnimationFrame(() => {
+        el.classList.add('is-in');
+        console.log('[lab] revealed:', el.querySelector('h2')?.textContent || el);
+      });
+    }
+  };
+
+  const alreadyInView = (el) => {
+    const r = el.getBoundingClientRect();
+    return r.top < window.innerHeight * 0.9 && r.bottom > 0;
+  };
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+
+    items.forEach(el => (alreadyInView(el) ? reveal(el) : io.observe(el)));
+  } else {
+    const tick = () => items.forEach(el => { if (alreadyInView(el)) reveal(el); });
+    tick(); window.addEventListener('scroll', tick, { passive: true });
+    window.addEventListener('resize', tick);
+  }
+
+  // Nudge scroll in case the browser is idle
+  setTimeout(() => window.dispatchEvent(new Event('scroll')), 50);
+});
+</script>
+{% endblock %}

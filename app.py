@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, Response
+from flask import jsonify
+import random
 from utils_text import summarize  # add at top with other imports
 from utils_sentiment import sentiment_label
 from database import (
@@ -8,6 +10,14 @@ from database import (
 
 app = Flask(__name__)
 init_db()  # create table if not exists when app starts
+
+QUOTES = [
+    "Keep going. Your future self is watching.",
+    "Tiny steps daily beat bursts of effort.",
+    "Ship. Learn. Iterate. Win.",
+    "Energy > intensity. Consistency wins.",
+    "Build quietly. Let results make the noise."
+]
 
 
 @app.route('/')
@@ -132,6 +142,13 @@ def sentiment_view():
         label, score = sentiment_label(text)
     return render_template('sentiment.html', text=text, label=label, score=score)
 
+@app.route('/lab')
+def lab():
+    return render_template('lab.html')
+
+@app.route("/api/quote")
+def api_quote():
+    return jsonify({"quote": random.choice(QUOTES)})
 
 
 if __name__ == '__main__':

@@ -26,6 +26,35 @@
         <hr>
         <p><a href="/guestbook">Open Guestbook</a></p>
     </div>
+    
+    <section class="card" style="margin-top:16px;">
+        <h3>✨ Daily Motivation</h3>
+        <p id="qtext">Click the button for a fresh quote.</p>
+        <button id="qbtn" class="btn-anim" style="margin-top:10px;">New Quote</button>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('qbtn');
+        const out = document.getElementById('qtext');
+        if (!btn || !out) return;
+
+        async function load() {
+            try {
+            const r = await fetch('/api/quote', { cache: 'no-store' });
+            const data = await r.json();
+            out.textContent = data.quote || "Stay steady, keep shipping.";
+            // tiny feedback if you have .btn-anim in CSS
+            btn.classList.remove('press'); void btn.offsetWidth; btn.classList.add('press');
+            } catch (e) {
+            out.textContent = "Network hiccup — try again.";
+            }
+        }
+
+        btn.addEventListener('click', load);
+        });
+    </script>
+
     {% endblock %}
 </body>
 </html>

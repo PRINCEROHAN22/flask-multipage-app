@@ -28,6 +28,8 @@
 
   <!-- Your external stylesheet (animations, etc.) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='reveal.css') }}">
+
 </head>
 
 <body class="page-enter">
@@ -102,5 +104,8 @@
     };
   })();
   </script>
+
+  <script src="{{ url_for('static', filename='reveal.js') }}"></script>
+
 </body>
 </html>
